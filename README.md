@@ -20,13 +20,20 @@ $ export GCS_BUCKET=<to_be_defined>
 ## Terraform
 
 ```
-$ terraform apply -var 'project_id=$GCP_PROJECT_ID' -var 'region=$GCP_REGION' -var 'zone=$GCP_ZONE' -var 's3_bucket=$S3_BUCKET' -var 'gcs_bucket=$GCS_BUCKET' -var 'aws_region=$AWS_REGION' -var 'aws_profile=$AWS_PROFILE'
+$ terraform apply \
+    -var 'project_id=$GCP_PROJECT_ID' \
+    -var 'region=$GCP_REGION' \
+    -var 'zone=$GCP_ZONE' \
+    -var 's3_bucket=$S3_BUCKET' \
+    -var 'gcs_bucket=$GCS_BUCKET' \
+    -var 'aws_region=$AWS_REGION' \
+    -var 'aws_profile=$AWS_PROFILE'
 ```
 
 ## Kubernetes on GKE
 
 ```
 $ export PROJECT_ID=$(gcloud config get-value project)
-$ envsubst < kubernetes/gke/sa.yaml | kubectl apply -f -
+$ envsubst < kubernetes/gke/serviceaccount.yaml | kubectl apply -f -
 $ kubectl apply -f kubernetes/gke/pod.yaml
 ```

@@ -52,6 +52,7 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
 resource "google_service_account_iam_binding" "service_account_iam_binding" {
   service_account_id = google_service_account.default.name
   role               = "roles/iam.workloadIdentityUser"
-  members            = ["serviceAccount:${var.gcp_project_id}.svc.id.goog[deafult/default]"]
+  members = [
+    "serviceAccount:${var.gcp_project_id}.svc.id.goog[default/oidc-exp-service-account]",
+  ]
 }
-
