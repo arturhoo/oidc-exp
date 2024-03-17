@@ -1,15 +1,27 @@
-variable "project_id" {
+variable "aws_profile" {
+  description = "AWS profile, to be used for the terraform state"
+}
+
+variable "gcp_project_id" {
   description = "project id"
 }
 
-variable "region" {
-  description = "region"
+variable "gcp_region" {
+  description = "GCP region"
 }
 
-variable "zone" {
-  description = "zone"
+variable "gcp_zone" {
+  description = "GCP zone"
+}
+
+variable "gcs_bucket" {
+  description = "GCS bucket"
 }
 
 variable "s3_bucket" {
-  description = "s3 bucket name"
+  description = "S3 bucket for the test"
+}
+
+variable "aws_region" {
+  description = "AWS region"
 }

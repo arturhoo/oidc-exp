@@ -1,10 +1,10 @@
 provider "aws" {
-  region  = "us-west-2"
-  profile = "oidc-exp-tf"
+  region  = var.aws_region
+  profile = var.aws_profile
 }
 
 
 provider "google" {
-  project = var.project_id
-  region  = var.region
+  project = var.gcp_project_id
+  region  = var.gcp_region
 }
