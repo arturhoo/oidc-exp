@@ -28,3 +28,23 @@ spec:
               path: oidc-exp-service-account-token
               expirationSeconds: 86400
               audience: sts.amazonaws.com
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gcloud-cli
+  namespace: default
+spec:
+  containers:
+    - name: gcloud-cli
+      image: gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine
+      command:
+        - /bin/bash
+        - -c
+        - "sleep 1800"
+  serviceAccountName: oidc-exp-service-account
+  tolerations:
+    - key: "kubernetes.io/arch"
+      operator: "Equal"
+      value: "arm64"
+      effect: "NoSchedule"

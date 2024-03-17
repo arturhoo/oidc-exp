@@ -1,10 +1,10 @@
 locals {
   aws_iam_role_name = "oidc_exp_aws_role"
-  issuer_url        = "container.googleapis.com/v1/projects/${var.gcp_project_id}/locations/${var.gcp_zone}/clusters/oidc-exp-cluster"
+  gke_issuer_url    = "container.googleapis.com/v1/projects/${var.gcp_project_id}/locations/${var.gcp_zone}/clusters/oidc-exp-cluster"
 }
 
 resource "aws_iam_openid_connect_provider" "trusted_gke_cluster" {
-  url             = "https://${local.issuer_url}"
+  url             = "https://${local.gke_issuer_url}"
   client_id_list  = ["sts.amazonaws.com"]
   thumbprint_list = ["08745487e891c19e3078c1f2a07e452950ef36f6"]
 }
@@ -23,7 +23,7 @@ resource "aws_iam_role" "gcp_aws_federated_role" {
         "Action" : "sts:AssumeRoleWithWebIdentity",
         "Condition" : {
           "StringEquals" : {
-            "${local.issuer_url}:sub" : "system:serviceaccount:default:oidc-exp-service-account",
+            "${local.gke_issuer_url}:sub" : "system:serviceaccount:default:oidc-exp-service-account",
           }
         }
       }
