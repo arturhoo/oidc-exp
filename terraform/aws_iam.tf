@@ -1,6 +1,6 @@
 locals {
   aws_iam_role_name = "oidc_exp_aws_role"
-  issuer_url        = "container.googleapis.com/v1/projects/${var.project_id}/locations/${var.zone}/clusters/oidc-exp-cluster"
+  issuer_url        = "container.googleapis.com/v1/projects/${var.gcp_project_id}/locations/${var.gcp_zone}/clusters/oidc-exp-cluster"
 }
 
 resource "aws_iam_openid_connect_provider" "trusted_gke_cluster" {
