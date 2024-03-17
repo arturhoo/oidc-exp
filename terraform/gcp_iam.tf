@@ -9,3 +9,7 @@ resource "google_storage_bucket_iam_binding" "viewer" {
     "serviceAccount:${google_service_account.default.email}",
   ]
 }
+
+
+
+
