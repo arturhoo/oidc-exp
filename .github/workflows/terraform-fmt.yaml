@@ -3,17 +3,17 @@ on:
   pull_request:
 
 jobs: 
-   fmt: 
-     runs-on: ubuntu-latest 
+  fmt: 
+    runs-on: ubuntu-latest 
+
+    steps: 
+    - uses: actions/checkout@v4
+      name: Checkout source code
   
-     steps: 
-      - uses: actions/checkout@v4
-        name: Checkout source code
-    
-       - name: Setup Terraform 
-         uses: hashicorp/setup-terraform@v3
-         with:
-          terraform_version: "1.5.5"
-  
-       - name: Terraform Format 
-         run: terraform fmt -check -recursive -diff
+    - name: Setup Terraform 
+      uses: hashicorp/setup-terraform@v3
+      with:
+      terraform_version: "1.5.5"
+
+    - name: Terraform Format 
+      run: terraform fmt -check -recursive -diff
