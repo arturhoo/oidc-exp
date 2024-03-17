@@ -19,6 +19,10 @@ resource "google_container_cluster" "primary" {
   # node pool and immediately delete it.
   remove_default_node_pool = true
   initial_node_count       = 1
+
+  workload_identity_config {
+    workload_pool = "${var.project_id}.svc.id.goog"
+  }
 }
 
 resource "google_container_node_pool" "primary_preemptible_nodes" {
@@ -38,6 +42,16 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
+
+    workload_metadata_config {
+      mode = "GKE_METADATA"
+    }
   }
+}
+
+resource "google_service_account_iam_binding" "service_account_iam_binding" {
+  service_account_id = google_service_account.default.name
+  role               = "roles/iam.workloadIdentityUser"
+  members            = ["serviceAccount:${var.project_id}.svc.id.goog[deafult/default]"]
 }
 

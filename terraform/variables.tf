@@ -10,7 +10,6 @@ variable "zone" {
   description = "zone"
 }
 
-provider "google" {
-  project = var.project_id
-  region  = var.region
+variable "s3_bucket" {
+  description = "s3 bucket name"
 }

@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: aws-cli
+  namespace: default
+spec:
+  containers:
+    - name: aws-cli
+      image: amazon/aws-cli
+      command:
+        - /bin/bash
+        - -c
+        - "sleep 1800"
+      volumeMounts:
+        - mountPath: /var/run/secrets/tokens
+          name: oidc-exp-service-account-token
+  serviceAccountName: oidc-exp-service-account
+  tolerations:
+    - key: "kubernetes.io/arch"
+      operator: "Equal"
+      value: "arm64"
+      effect: "NoSchedule"
+  volumes:
+    - name: oidc-exp-service-account-token
+      projected:
+        sources:
+          - serviceAccountToken:
+              path: oidc-exp-service-account-token
+              expirationSeconds: 86400
+              audience: sts.amazonaws.com
