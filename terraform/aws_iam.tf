@@ -1,6 +1,5 @@
 locals {
-  aws_iam_role_name = "oidc_exp_aws_role"
-  gke_issuer_url    = "container.googleapis.com/v1/projects/${var.gcp_project_id}/locations/${var.gcp_zone}/clusters/oidc-exp-cluster"
+  gke_issuer_url = "container.googleapis.com/v1/projects/${var.gcp_project_id}/locations/${var.gcp_zone}/clusters/oidc-exp-cluster"
 }
 
 resource "aws_iam_openid_connect_provider" "trusted_gke_cluster" {
@@ -9,8 +8,12 @@ resource "aws_iam_openid_connect_provider" "trusted_gke_cluster" {
   thumbprint_list = ["08745487e891c19e3078c1f2a07e452950ef36f6"]
 }
 
-resource "aws_iam_role" "gcp_aws_federated_role" {
-  name = local.aws_iam_role_name
+locals {
+  eks_issuer = trimprefix(aws_eks_cluster.primary.identity[0].oidc[0].issuer, "https://")
+}
+
+resource "aws_iam_role" "federated_role" {
+  name = "oidc_exp_federated_role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -24,6 +27,19 @@ resource "aws_iam_role" "gcp_aws_federated_role" {
         "Condition" : {
           "StringEquals" : {
             "${local.gke_issuer_url}:sub" : "system:serviceaccount:default:oidc-exp-service-account",
+          }
+        }
+      },
+      {
+        "Effect" : "Allow",
+        "Principal" : {
+          "Federated" : aws_iam_openid_connect_provider.oidc_provider.arn
+        },
+        "Action" : "sts:AssumeRoleWithWebIdentity",
+        "Condition" : {
+          "StringEquals" : {
+            "${local.eks_issuer}:aud" : "sts.amazonaws.com",
+            "${local.eks_issuer}:sub" : "system:serviceaccount:default:oidc-exp-service-account"
           }
         }
       }
@@ -50,6 +66,6 @@ resource "aws_iam_policy" "s3_read_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "s3_read_policy_attachment" {
-  role       = aws_iam_role.gcp_aws_federated_role.name
+  role       = aws_iam_role.federated_role.name
   policy_arn = aws_iam_policy.s3_read_policy.arn
 }
