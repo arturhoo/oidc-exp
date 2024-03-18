@@ -206,11 +206,25 @@ resource "aws_eks_node_group" "node_group" {
   }
 
   ami_type       = "BOTTLEROCKET_ARM_64"
-  instance_types = ["t4g.micro"]
+  instance_types = ["t4g.small"]
 
   depends_on = [
     aws_iam_role_policy_attachment.cni_policy_attachment,
     aws_iam_role_policy_attachment.ec2_container_registry_policy_attachment,
     aws_iam_role_policy_attachment.worker_node_policy_attachment,
   ]
+}
+
+data "tls_certificate" "cert" {
+  url = aws_eks_cluster.primary.identity[0].oidc[0].issuer
+}
+
+resource "aws_iam_openid_connect_provider" "oidc_provider" {
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = [data.tls_certificate.cert.certificates[0].sha1_fingerprint]
+  url             = aws_eks_cluster.primary.identity[0].oidc[0].issuer
+
+  tags = {
+    Name = "oidc-exp-cluster-eks-irsa",
+  }
 }

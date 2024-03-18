@@ -37,3 +37,23 @@ $ export PROJECT_ID=$(gcloud config get-value project)
 $ envsubst < kubernetes/gke/serviceaccount.yaml | kubectl apply -f -
 $ kubectl apply -f kubernetes/gke/pod.yaml
 ```
+
+```
+$ k exec -it aws-cli -- bash
+bash-4.2# AWS_WEB_IDENTITY_TOKEN_FILE=/var/run/secrets/tokens/oidc-exp-service-account-token AWS_ROLE_ARN=arn:aws:iam::$account_od:role/oidc_exp_federated_role aws s3 ls s3://$s3_bucket
+2024-03-17 18:29:42         15 test.txt
+```
+
+## Kubernetes on EKS
+
+```
+$ export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+$ envsubst < kubernetes/eks/serviceaccount.yaml | kubectl apply -f -
+$ kubectl apply -f kubernetes/eks/pod.yaml
+```
+
+```
+$ k exec -it aws-cli -- bash
+bash-4.2# aws s3 ls s3://$s3_bucket
+2024-03-17 18:29:42         15 test.txt
+```
