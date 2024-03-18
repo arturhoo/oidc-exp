@@ -32,3 +32,13 @@ variable "aws_region" {
   description = "AWS region"
   type        = string
 }
+
+variable "aws_zone1" {
+  description = "AWS zone 1"
+  type        = string
+}
+
+variable "aws_zone2" {
+  description = "AWS zone 2"
+  type        = string
+}
