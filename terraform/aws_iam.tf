@@ -1,3 +1,17 @@
+data "tls_certificate" "cert" {
+  url = aws_eks_cluster.primary.identity[0].oidc[0].issuer
+}
+
+resource "aws_iam_openid_connect_provider" "oidc_provider" {
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = [data.tls_certificate.cert.certificates[0].sha1_fingerprint]
+  url             = aws_eks_cluster.primary.identity[0].oidc[0].issuer
+
+  tags = {
+    Name = "oidc-exp-cluster-eks-irsa",
+  }
+}
+
 locals {
   gke_issuer_url = "container.googleapis.com/v1/projects/${var.gcp_project_id}/locations/${var.gcp_zone}/clusters/oidc-exp-cluster"
 }

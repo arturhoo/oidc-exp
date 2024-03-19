@@ -41,7 +41,7 @@ $ envsubst < kubernetes/gke/pod.yaml | kubectl apply -f -
 
 ```
 $ kubectl exec -it aws-cli -- bash
-bash-4.2# AWS_WEB_IDENTITY_TOKEN_FILE=/var/run/secrets/tokens/oidc-exp-service-account-token AWS_ROLE_ARN=arn:aws:iam::$account_od:role/oidc_exp_federated_role aws s3 ls s3://oidc-exp-s3-bucket
+bash-4.2# aws s3 ls s3://oidc-exp-s3-bucket
 2024-03-17 18:29:42         15 test.txt
 ```
 
