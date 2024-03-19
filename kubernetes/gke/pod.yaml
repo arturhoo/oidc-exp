@@ -18,7 +18,7 @@ spec:
         - name: AWS_WEB_IDENTITY_TOKEN_FILE
           value: "/var/run/secrets/tokens/oidc-exp-service-account-token"
         - name: AWS_ROLE_ARN
-          value: "arn:aws:iam::$AWS_ACCOUNT_ID:role/oidc_exp_federated_role aws s3 ls s3://$s3_bucket"
+          value: "arn:aws:iam::$AWS_ACCOUNT_ID:role/oidc_exp_federated_role"
   serviceAccountName: oidc-exp-service-account
   tolerations:
     - key: "kubernetes.io/arch"
