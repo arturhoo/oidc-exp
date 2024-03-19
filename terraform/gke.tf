@@ -1,8 +1,3 @@
-resource "google_service_account" "default" {
-  account_id   = "oidc-exp-service-account"
-  display_name = "OIDC Exp Service Account"
-}
-
 data "google_container_engine_versions" "gke_version" {
   location       = var.gcp_region
   version_prefix = "1.29."
