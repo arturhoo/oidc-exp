@@ -42,5 +42,6 @@ resource "google_service_account_iam_binding" "binding" {
 
   members = [
     "principal://iam.googleapis.com/projects/${data.google_project.project.number}/locations/global/workloadIdentityPools/${local.workload_identity_pool_id}/subject/system:serviceaccount:default:oidc-exp-service-account",
+    "serviceAccount:${var.gcp_project_id}.svc.id.goog[default/oidc-exp-service-account]",
   ]
 }
