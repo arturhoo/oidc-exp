@@ -11,6 +11,8 @@ $ gcloud auth application-default login
 
 ```
 $ export GCP_PROJECT_ID=$(gcloud config get-value project)
+$ export GCP_PROJECT_NUMBER=$(gcloud projects describe $GCP_PROJECT_ID --format="value(projectNumber)")
+$ export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 $ export GCP_REGION=<to_be_defined>
 $ export GCP_ZONE=<to_be_defined>
 $ export S3_BUCKET=<to_be_defined>
@@ -33,27 +35,38 @@ $ terraform apply \
 ## Kubernetes on GKE
 
 ```
-$ export PROJECT_ID=$(gcloud config get-value project)
 $ envsubst < kubernetes/gke/serviceaccount.yaml | kubectl apply -f -
-$ kubectl apply -f kubernetes/gke/pod.yaml
+$ envsubst < kubernetes/gke/pod.yaml | kubectl apply -f -
 ```
 
 ```
-$ k exec -it aws-cli -- bash
-bash-4.2# AWS_WEB_IDENTITY_TOKEN_FILE=/var/run/secrets/tokens/oidc-exp-service-account-token AWS_ROLE_ARN=arn:aws:iam::$account_od:role/oidc_exp_federated_role aws s3 ls s3://$s3_bucket
+$ kubectl exec -it aws-cli -- bash
+bash-4.2# AWS_WEB_IDENTITY_TOKEN_FILE=/var/run/secrets/tokens/oidc-exp-service-account-token AWS_ROLE_ARN=arn:aws:iam::$account_od:role/oidc_exp_federated_role aws s3 ls s3://oidc-exp-s3-bucket
 2024-03-17 18:29:42         15 test.txt
+```
+
+```
+$ kubectl exec -it gcloud-cli -- bash
+gcloud-cli:/# gcloud storage ls gs://oidc-exp-gcs-bucket
+gs://oidc-exp-gcs-bucket/test.txt
 ```
 
 ## Kubernetes on EKS
 
 ```
-$ export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+$ envsubst < kubernetes/eks/configmap.yaml | kubectl apply -f -
 $ envsubst < kubernetes/eks/serviceaccount.yaml | kubectl apply -f -
-$ kubectl apply -f kubernetes/eks/pod.yaml
+$ envsubst < kubernetes/eks/pod.yaml | kubectl apply -f -
 ```
 
 ```
-$ k exec -it aws-cli -- bash
-bash-4.2# aws s3 ls s3://$s3_bucket
+$ kubectl exec -it aws-cli -- bash
+bash-4.2# aws s3 ls s3://oidc-exp-s3-bucket
 2024-03-17 18:29:42         15 test.txt
+```
+
+```
+$ kubectl exec -it gcloud-cli -- bash
+gcloud-cli:/# gcloud storage ls gs://oidc-exp-gcs-bucket
+gs://oidc-exp-gcs-bucket/test.txt
 ```

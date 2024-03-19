@@ -12,3 +12,39 @@ spec:
         - -c
         - "sleep 1800"
   serviceAccountName: oidc-exp-service-account
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gcloud-cli
+  namespace: default
+spec:
+  containers:
+    - name: gcloud-cli
+      image: gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine
+      command:
+        - /bin/bash
+        - -c
+        - "sleep 1800"
+      volumeMounts:
+        - name: token
+          mountPath: "/var/run/service-account"
+          readOnly: true
+        - name: workload-identity-credential-configuration
+          mountPath: "/var/run/secrets/tokens/gcp-ksa"
+          readOnly: true
+      env:
+        - name: CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE
+          value: "/var/run/secrets/tokens/gcp-ksa/credential-configuration.json"
+  serviceAccountName: oidc-exp-service-account
+  volumes:
+    - name: token
+      projected:
+        sources:
+          - serviceAccountToken:
+              audience: https://iam.googleapis.com/projects/$GCP_PROJECT_NUMBER/locations/global/workloadIdentityPools/oidc-exp-workload-identity-pool/providers/trusted-eks-cluster
+              expirationSeconds: 3600
+              path: token
+    - name: workload-identity-credential-configuration
+      configMap:
+        name: oidc-exp-config-map
