@@ -24,9 +24,9 @@ $ export GCS_BUCKET=<to_be_defined>
 
 ```
 $ terraform apply \
-    -var 'project_id=$GCP_PROJECT_ID' \
-    -var 'region=$GCP_REGION' \
-    -var 'zone=$GCP_ZONE' \
+    -var 'gcp_project_id=$GCP_PROJECT_ID' \
+    -var 'gcp_region=$GCP_REGION' \
+    -var 'gcp_zone=$GCP_ZONE' \
     -var 's3_bucket=$S3_BUCKET' \
     -var 'gcs_bucket=$GCS_BUCKET' \
     -var 'aws_region=$AWS_REGION' \
