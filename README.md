@@ -1,3 +1,4 @@
+For context, please read [Cross-Cloud Access: A Native Kubernetes OIDC Approach](https://www.artur-rodrigues.com/tech/2024/03/19/cross-cloud-access-a-native-kubernetes-oidc-approach.html)
 
 ## Prerequisites
 
