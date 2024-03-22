@@ -1,19 +1,14 @@
-variable "aws_profile" {
-  description = "AWS profile, to be used for the terraform state"
-  type        = string
-}
-
-variable "gcp_project_id" {
+variable "project_id" {
   description = "project id"
   type        = string
 }
 
-variable "gcp_region" {
+variable "region" {
   description = "GCP region"
   type        = string
 }
 
-variable "gcp_zone" {
+variable "zone" {
   description = "GCP zone"
   type        = string
 }
@@ -23,8 +18,13 @@ variable "gcs_bucket" {
   type        = string
 }
 
-variable "s3_bucket" {
-  description = "S3 bucket for the test"
+variable "eks_cluster_name" {
+  description = "Name of EKS cluster"
+  type        = string
+}
+
+variable "aws_profile" {
+  description = "AWS profile, to be used for the terraform state"
   type        = string
 }
 
@@ -33,3 +33,7 @@ variable "aws_region" {
   type        = string
 }
 
+variable "s3_bucket" {
+  description = "S3 bucket for the test"
+  type        = string
+}

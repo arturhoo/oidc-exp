@@ -1,6 +1,6 @@
 resource "google_storage_bucket" "gcs_bucket" {
   name     = var.gcs_bucket
-  location = var.gcp_region
+  location = var.region
 }
 
 resource "google_storage_bucket_object" "gcs_object" {
