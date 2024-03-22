@@ -17,6 +17,10 @@ resource "google_iam_workload_identity_pool" "pool" {
   workload_identity_pool_id = local.workload_identity_pool_id
 }
 
+data "aws_eks_cluster" "primary" {
+  name = var.eks_cluster_name
+}
+
 resource "google_iam_workload_identity_pool_provider" "trusted_eks_cluster" {
   workload_identity_pool_id          = google_iam_workload_identity_pool.pool.workload_identity_pool_id
   workload_identity_pool_provider_id = "trusted-eks-cluster"
@@ -26,12 +30,12 @@ resource "google_iam_workload_identity_pool_provider" "trusted_eks_cluster" {
   }
 
   oidc {
-    issuer_uri = aws_eks_cluster.primary.identity[0].oidc[0].issuer
+    issuer_uri = data.aws_eks_cluster.primary.identity[0].oidc[0].issuer
   }
 }
 
 data "google_project" "project" {
-  project_id = var.gcp_project_id
+  project_id = var.project_id
 }
 
 resource "google_service_account_iam_binding" "binding" {
@@ -40,6 +44,6 @@ resource "google_service_account_iam_binding" "binding" {
 
   members = [
     "principal://iam.googleapis.com/projects/${data.google_project.project.number}/locations/global/workloadIdentityPools/${local.workload_identity_pool_id}/subject/system:serviceaccount:default:oidc-exp-service-account",
-    "serviceAccount:${var.gcp_project_id}.svc.id.goog[default/oidc-exp-service-account]",
+    "serviceAccount:${var.project_id}.svc.id.goog[default/oidc-exp-service-account]",
   ]
 }

@@ -1,11 +1,11 @@
 data "google_container_engine_versions" "gke_version" {
-  location       = var.gcp_region
+  location       = var.region
   version_prefix = "1.29."
 }
 
 resource "google_container_cluster" "primary" {
   name                = "oidc-exp-cluster"
-  location            = var.gcp_zone
+  location            = var.zone
   deletion_protection = false
   min_master_version  = data.google_container_engine_versions.gke_version.release_channel_latest_version["REGULAR"]
 
@@ -16,13 +16,13 @@ resource "google_container_cluster" "primary" {
   initial_node_count       = 1
 
   workload_identity_config {
-    workload_pool = "${var.gcp_project_id}.svc.id.goog"
+    workload_pool = "${var.project_id}.svc.id.goog"
   }
 }
 
 resource "google_container_node_pool" "primary_preemptible_nodes" {
   name       = "oidc-exp-node-pool"
-  location   = var.gcp_zone
+  location   = var.zone
   cluster    = google_container_cluster.primary.name
   node_count = 1
 

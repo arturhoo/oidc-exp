@@ -1,19 +1,5 @@
-data "tls_certificate" "cert" {
-  url = aws_eks_cluster.primary.identity[0].oidc[0].issuer
-}
-
-resource "aws_iam_openid_connect_provider" "oidc_provider" {
-  client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = [data.tls_certificate.cert.certificates[0].sha1_fingerprint]
-  url             = aws_eks_cluster.primary.identity[0].oidc[0].issuer
-
-  tags = {
-    Name = "oidc-exp-cluster-eks-irsa",
-  }
-}
-
 locals {
-  gke_issuer_url = "container.googleapis.com/v1/projects/${var.gcp_project_id}/locations/${var.gcp_zone}/clusters/oidc-exp-cluster"
+  gke_issuer_url = "container.googleapis.com/v1/projects/${var.project_id}/locations/${var.zone}/clusters/oidc-exp-cluster"
 }
 
 resource "aws_iam_openid_connect_provider" "trusted_gke_cluster" {
@@ -22,12 +8,8 @@ resource "aws_iam_openid_connect_provider" "trusted_gke_cluster" {
   thumbprint_list = ["08745487e891c19e3078c1f2a07e452950ef36f6"]
 }
 
-locals {
-  eks_issuer = trimprefix(aws_eks_cluster.primary.identity[0].oidc[0].issuer, "https://")
-}
-
 resource "aws_iam_role" "federated_role" {
-  name = "oidc_exp_federated_role"
+  name = "oidc_exp_federated_role_gcp"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -44,19 +26,6 @@ resource "aws_iam_role" "federated_role" {
           }
         }
       },
-      {
-        "Effect" : "Allow",
-        "Principal" : {
-          "Federated" : aws_iam_openid_connect_provider.oidc_provider.arn
-        },
-        "Action" : "sts:AssumeRoleWithWebIdentity",
-        "Condition" : {
-          "StringEquals" : {
-            "${local.eks_issuer}:aud" : "sts.amazonaws.com",
-            "${local.eks_issuer}:sub" : "system:serviceaccount:default:oidc-exp-service-account"
-          }
-        }
-      }
     ]
   })
 }
