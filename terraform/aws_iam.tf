@@ -12,10 +12,6 @@ resource "aws_iam_openid_connect_provider" "oidc_provider" {
   }
 }
 
-locals {
-  gke_issuer_url = "container.googleapis.com/v1/projects/${var.gcp_project_id}/locations/${var.gcp_zone}/clusters/oidc-exp-cluster"
-}
-
 resource "aws_iam_openid_connect_provider" "trusted_gke_cluster" {
   url             = "https://${local.gke_issuer_url}"
   client_id_list  = ["sts.amazonaws.com"]

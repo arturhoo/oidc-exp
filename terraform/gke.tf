@@ -1,3 +1,8 @@
+resource "google_service_account" "gke_limited_service_account" {
+  account_id   = "gke-limited-service-account"
+  display_name = "GKE Limited Service Account"
+}
+
 data "google_container_engine_versions" "gke_version" {
   location       = var.gcp_region
   version_prefix = "1.29."
@@ -33,7 +38,7 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
     machine_type = "t2a-standard-1"
 
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
-    service_account = google_service_account.default.email
+    service_account = google_service_account.gke_limited_service_account.email
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
@@ -42,4 +47,8 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
       mode = "GKE_METADATA"
     }
   }
+}
+
+locals {
+  gke_issuer_url = "container.googleapis.com/v1/projects/${var.gcp_project_id}/locations/${var.gcp_zone}/clusters/oidc-exp-cluster"
 }
