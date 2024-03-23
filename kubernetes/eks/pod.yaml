@@ -42,7 +42,7 @@ spec:
       projected:
         sources:
           - serviceAccountToken:
-              audience: https://iam.googleapis.com/projects/$GCP_PROJECT_NUMBER/locations/global/workloadIdentityPools/oidc-exp-workload-identity-pool/providers/trusted-eks-cluster
+              audience: https://iam.googleapis.com/projects/$GCP_PROJECT_NUMBER/locations/global/workloadIdentityPools/oidc-exp-wip-$GCP_POOL_SUFFIX/providers/trusted-gke-cluster
               expirationSeconds: 3600
               path: token
     - name: workload-identity-credential-configuration

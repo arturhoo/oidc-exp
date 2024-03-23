@@ -20,6 +20,7 @@ $ export S3_BUCKET=<to_be_defined>
 $ export GCS_BUCKET=<to_be_defined>
 ```
 
+
 ## Terraform
 
 ```
@@ -35,7 +36,10 @@ $ terraform apply \
 
 ## Kubernetes on GKE
 
+You'll also need to export the `GCP_POOL_SUFFIX` variable, based on the TF output `gcp_pool_suffix`. This variable is only used for the K8s manifests definition.
+
 ```
+$ envsubst < kubernetes/eks/configmap.yaml | kubectl apply -f -
 $ envsubst < kubernetes/gke/serviceaccount.yaml | kubectl apply -f -
 $ envsubst < kubernetes/gke/pod.yaml | kubectl apply -f -
 ```
@@ -53,6 +57,8 @@ gs://oidc-exp-gcs-bucket/test.txt
 ```
 
 ## Kubernetes on EKS
+
+You'll also need to export the `GCP_POOL_SUFFIX` variable, based on the TF output `gcp_pool_suffix`. This variable is only used for the K8s manifests definition.
 
 ```
 $ envsubst < kubernetes/eks/configmap.yaml | kubectl apply -f -
